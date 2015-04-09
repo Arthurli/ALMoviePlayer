@@ -10,17 +10,34 @@
 
 @implementation ALView
 
+- (instancetype)initWithFrame:(CGRect)frame
+{
+    self = [super initWithFrame:frame];
+    
+    if (self) {
+        [self setup];
+    }
+    
+    return self;
+}
+
+
 - (instancetype)init
 {
     self = [super init];
     
     if (self) {
-        _defaultColdor = [UIColor blackColor];
-        _highlightColor = [UIColor yellowColor];
-        _highlight = NO;
+        [self setup];
     }
     
     return self;
+}
+
+- (void)setup
+{
+    _defaultColdor = [UIColor blackColor];
+    _highlightColor = [UIColor yellowColor];
+    _highlight = NO;
 }
 
 - (void)setHighlight:(BOOL)highlight

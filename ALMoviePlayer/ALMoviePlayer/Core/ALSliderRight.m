@@ -30,18 +30,19 @@
     CGColorSpaceRef colorSpace = CGColorSpaceCreateDeviceRGB();
     CGContextRef context = UIGraphicsGetCurrentContext();
     
-    //// Color Declarations
-    UIColor* color5 = [UIColor colorWithRed: 0.992 green: 0.902 blue: 0.004 alpha: 1];
-    UIColor* gradientColor2 = [UIColor colorWithRed: 1 green: 1 blue: 1 alpha: 1];
-    UIColor* color6 = [UIColor colorWithRed: 0.196 green: 0.161 blue: 0.047 alpha: 1];
+    UIColor* color = [UIColor yellowColor];
+    UIColor* color2 = [UIColor whiteColor];
+    if (self.highlight) {
+        color = self.highlightColor;
+    } else {
+        color = self.defaultColdor;
+    }
     
     //// Gradient Declarations
-    NSArray* gradient3Colors = [NSArray arrayWithObjects:
-                                (id)gradientColor2.CGColor,
-                                (id)[UIColor colorWithRed: 0.996 green: 0.951 blue: 0.502 alpha: 1].CGColor,
-                                (id)color5.CGColor, nil];
-    CGFloat gradient3Locations[] = {0, 0, 0.49};
-    CGGradientRef gradient3 = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradient3Colors, gradient3Locations);
+    NSArray* gradientColors = [NSArray arrayWithObjects:
+                                (id)color.CGColor, nil];
+    CGFloat gradientLocations[] = {1};
+    CGGradientRef gradient = CGGradientCreateWithColors(colorSpace, (__bridge CFArrayRef)gradientColors, gradientLocations);
     
     //// Frames
     CGRect bubbleFrame = self.bounds;
@@ -53,7 +54,7 @@
     [roundedRectanglePath closePath];
     CGContextSaveGState(context);
     [roundedRectanglePath addClip];
-    CGContextDrawLinearGradient(context, gradient3,
+    CGContextDrawLinearGradient(context, gradient,
                                 CGPointMake(CGRectGetMidX(roundedRectangleRect), CGRectGetMinY(roundedRectangleRect)),
                                 CGPointMake(CGRectGetMidX(roundedRectangleRect), CGRectGetMaxY(roundedRectangleRect)),
                                 0);
@@ -73,7 +74,7 @@
     [bezier3Path closePath];
     bezier3Path.miterLimit = 19;
     
-    [color6 setFill];
+    [color2 setFill];
     [bezier3Path fill];
     
     
@@ -87,12 +88,12 @@
     [bezierPath closePath];
     bezierPath.miterLimit = 19;
     
-    [color6 setFill];
+    [color2 setFill];
     [bezierPath fill];
     
     
     //// Cleanup
-    CGGradientRelease(gradient3);
+    CGGradientRelease(gradient);
     CGColorSpaceRelease(colorSpace);
 }
 

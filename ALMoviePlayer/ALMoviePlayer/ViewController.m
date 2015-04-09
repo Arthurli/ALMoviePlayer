@@ -24,9 +24,12 @@
 {
     NSBundle *mainBundle = [NSBundle mainBundle];
     NSString *filePath = [mainBundle pathForResource: @"thaiPhuketKaronBeach" ofType: @"MOV"];
-    
     ALMoviePlayer *moviePlayer = [[ALMoviePlayer alloc] init];
-    [self presentViewController:moviePlayer animated:YES completion:^{
+    moviePlayer.title = @"thaiPhuketKaronBeach.mov";
+    UIViewController *a = [[UIViewController alloc] init];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:a];
+    [self presentViewController:nav animated:YES completion:^{
+        [a.navigationController pushViewController:moviePlayer animated:YES];
         moviePlayer.filePath = filePath;
     }];
 }

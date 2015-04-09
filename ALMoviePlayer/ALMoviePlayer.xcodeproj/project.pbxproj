@@ -11,7 +11,7 @@
 		0C0CED721AD50A260047E38F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C0CED711AD50A260047E38F /* AppDelegate.m */; };
 		0C0CED751AD50A260047E38F /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C0CED741AD50A260047E38F /* ViewController.m */; };
 		0C0CED781AD50A260047E38F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 0C0CED761AD50A260047E38F /* Main.storyboard */; };
-		0C0CED7A1AD50A260047E38F /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C0CED791AD50A260047E38F /* Images.xcassets */; };
+		0C0CED7A1AD50A260047E38F /* ALMoviePlayer.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0C0CED791AD50A260047E38F /* ALMoviePlayer.xcassets */; };
 		0C0CED7D1AD50A260047E38F /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 0C0CED7B1AD50A260047E38F /* LaunchScreen.xib */; };
 		0C0CED891AD50A270047E38F /* ALMoviePlayerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C0CED881AD50A270047E38F /* ALMoviePlayerTests.m */; };
 		0C0CED951AD50A730047E38F /* ALMoviePlayerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 0C0CED941AD50A730047E38F /* ALMoviePlayerViewController.m */; };
@@ -51,7 +51,7 @@
 		0C0CED731AD50A260047E38F /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
 		0C0CED741AD50A260047E38F /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		0C0CED771AD50A260047E38F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		0C0CED791AD50A260047E38F /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
+		0C0CED791AD50A260047E38F /* ALMoviePlayer.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = ALMoviePlayer.xcassets; sourceTree = "<group>"; };
 		0C0CED7C1AD50A260047E38F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		0C0CED821AD50A270047E38F /* ALMoviePlayerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ALMoviePlayerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0C0CED871AD50A270047E38F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -141,7 +141,7 @@
 				0C0CED741AD50A260047E38F /* ViewController.m */,
 				0C0CED921AD50A5A0047E38F /* Core */,
 				0C0CED761AD50A260047E38F /* Main.storyboard */,
-				0C0CED791AD50A260047E38F /* Images.xcassets */,
+				0C0CED791AD50A260047E38F /* ALMoviePlayer.xcassets */,
 				0C0CED7B1AD50A260047E38F /* LaunchScreen.xib */,
 				0C0CED6C1AD50A260047E38F /* Supporting Files */,
 			);
@@ -281,7 +281,7 @@
 				0C0CED781AD50A260047E38F /* Main.storyboard in Resources */,
 				0C0CEDA91AD50D5A0047E38F /* thaiPhuketKaronBeach.MOV in Resources */,
 				0C0CED7D1AD50A260047E38F /* LaunchScreen.xib in Resources */,
-				0C0CED7A1AD50A260047E38F /* Images.xcassets in Resources */,
+				0C0CED7A1AD50A260047E38F /* ALMoviePlayer.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -500,6 +500,7 @@
 				0C0CED8E1AD50A270047E38F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		0C0CED8F1AD50A270047E38F /* Build configuration list for PBXNativeTarget "ALMoviePlayerTests" */ = {
 			isa = XCConfigurationList;
@@ -508,6 +509,7 @@
 				0C0CED911AD50A270047E38F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

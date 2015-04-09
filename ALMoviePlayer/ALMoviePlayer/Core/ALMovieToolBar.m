@@ -23,7 +23,7 @@
     self = [super init];
     
     if (self) {
-        
+        self.backgroundColor = [UIColor colorWithRed:242.0/255.0 green:224.0/255.0 blue:222.0/255.0 alpha:1.0];
     }
     
     return self;
@@ -104,13 +104,13 @@
     [button addTarget:self action:@selector(didClickButton:) forControlEvents:UIControlEventTouchUpInside];
     switch (buttonType) {
             case ALMovieToolBarButtonTypeDelete:
-            button.backgroundColor = [UIColor redColor];
+            [button setImage:[UIImage imageNamed:@"trash"] forState:UIControlStateNormal];
             break;
             case ALMovieToolBarButtonTypePlay:
-            button.backgroundColor = [UIColor yellowColor];
+            [button setImage:[UIImage imageNamed:@"play-small"] forState:UIControlStateNormal];
             break;
             case ALMovieToolBarButtonTypePause:
-            button.backgroundColor = [UIColor greenColor];
+            [button setImage:[UIImage imageNamed:@"back"] forState:UIControlStateNormal];
             break;
             default:
             break;

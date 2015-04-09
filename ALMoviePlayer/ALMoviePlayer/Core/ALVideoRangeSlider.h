@@ -31,10 +31,12 @@
 @property (nonatomic, assign) NSInteger minGap;
 
 @property (nonatomic, assign) BOOL edit;
+@property (nonatomic, assign) BOOL hideRangeSlider;
 
 - (id)initWithFrame:(CGRect)frame videoUrl:(NSURL *)videoUrl;
 - (void)setBeganTime:(float)beganTime;
 - (void)setEndTime:(float)endTime;
+- (void)setFrameWidth:(float)width;
 - (void)setNowCurrentTime:(float)currentTime;
 - (void)setupPosition;
 
