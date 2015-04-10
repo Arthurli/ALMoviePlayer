@@ -18,21 +18,10 @@
         self.defaultColdor = [UIColor whiteColor];
         self.highlightColor = [UIColor grayColor];
 
-        if (self.highlight) {
-            self.backgroundColor = self.highlightColor;
-        } else {
-            self.backgroundColor = self.defaultColdor;
-        }
-        
         self.layer.cornerRadius = self.frame.size.width/2;
         
     }
     return self;
-}
-
-- (void)drawRect:(CGRect)rect
-{
-    
 }
 
 @end

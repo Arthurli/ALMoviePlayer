@@ -25,10 +25,13 @@
 @property (nonatomic) float rightPosition;
 @property (nonatomic) float currentTime;
 
-@property (nonatomic, strong) UIView *topBorder;
-@property (nonatomic, strong) UIView *bottomBorder;
 @property (nonatomic, assign) NSInteger maxGap;
 @property (nonatomic, assign) NSInteger minGap;
+
+@property (nonatomic, strong) UIColor *rangeSliderDefaultColor;
+@property (nonatomic, strong) UIColor *rangeSliderHightlightColor;
+@property (nonatomic, strong) UIColor *progressviewDefaultColor;
+@property (nonatomic, strong) UIColor *progressviewHightlightColor;
 
 @property (nonatomic, assign) BOOL edit;
 @property (nonatomic, assign) BOOL hideRangeSlider;
@@ -46,6 +49,8 @@
 @protocol ALVideoRangeSliderDelegate <NSObject>
 
 @optional
+
+- (void)currentTimeArriveStartOrEnd:(BOOL)isEnd;
 
 - (void)videoRange:(ALVideoRangeSlider *)videoRange didChangeLeftPosition:(float)leftPosition rightPosition:(float)rightPosition;
 

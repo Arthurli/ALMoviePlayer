@@ -12,8 +12,9 @@
 
 @property (nonatomic, strong) AVAssetImageGenerator *imageGenerator;
 @property (nonatomic, strong) UIView *bgView;
-@property (nonatomic, strong) UIView *centerView;
 @property (nonatomic, strong) NSURL *videoUrl;
+@property (nonatomic, strong) ALView *topBorder;
+@property (nonatomic, strong) ALView *bottomBorder;
 @property (nonatomic, strong) ALSliderLeft *leftThumb;
 @property (nonatomic, strong) ALSliderRight *rightThumb;
 @property (nonatomic, strong) ALProgressView *progressThumb;
@@ -50,15 +51,13 @@
         
         _videoUrl = videoUrl;
         
-        
-        _topBorder = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, SLIDER_BORDERS_SIZE)];
+        _topBorder = [[ALView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, SLIDER_BORDERS_SIZE)];
         _topBorder.backgroundColor = [UIColor colorWithRed: 0.996 green: 0.951 blue: 0.502 alpha: 1];
         [self addSubview:_topBorder];
         
-        _bottomBorder = [[UIView alloc] initWithFrame:CGRectMake(0, frame.size.height-SLIDER_BORDERS_SIZE, frame.size.width, SLIDER_BORDERS_SIZE)];
+        _bottomBorder = [[ALView alloc] initWithFrame:CGRectMake(0, frame.size.height-SLIDER_BORDERS_SIZE, frame.size.width, SLIDER_BORDERS_SIZE)];
         _bottomBorder.backgroundColor = [UIColor colorWithRed: 0.992 green: 0.902 blue: 0.004 alpha: 1];
         [self addSubview:_bottomBorder];
-        
         
         _leftThumb = [[ALSliderLeft alloc] initWithFrame:CGRectMake(0, 0, thumbWidth, frame.size.height)];
         _leftThumb.contentMode = UIViewContentModeLeft;
@@ -68,22 +67,12 @@
         _leftThumb.layer.borderWidth = 0;
         [self addSubview:_leftThumb];
         
-        
         _rightThumb = [[ALSliderRight alloc] initWithFrame:CGRectMake(0, 0, thumbWidth, frame.size.height)];
-        
         _rightThumb.contentMode = UIViewContentModeRight;
         _rightThumb.userInteractionEnabled = YES;
         _rightThumb.clipsToBounds = YES;
         _rightThumb.backgroundColor = [UIColor clearColor];
         [self addSubview:_rightThumb];
-        
-        _rightPosition = frame.size.width;
-        _leftPosition = 0;
-        _currentTime = 0;
-        
-        _centerView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
-        _centerView.backgroundColor = [UIColor clearColor];
-        [self addSubview:_centerView];
         
         _progressThumb = [[ALProgressView alloc] initWithFrame:CGRectMake(0, 0, 6, frame.size.height)];
         _progressThumb.contentMode = UIViewContentModeRight;
@@ -91,13 +80,53 @@
         _progressThumb.clipsToBounds = YES;
         [self addSubview:_progressThumb];
         
-        self.edit = NO;
-        [self updateGestureRecognizer];
+        self.rangeSliderDefaultColor = [UIColor blackColor];
+        self.rangeSliderHightlightColor = [UIColor yellowColor];
+        self.progressviewDefaultColor = [UIColor whiteColor];
+        self.progressviewHightlightColor = [UIColor grayColor];
         
+        _rightPosition = frame.size.width;
+        _leftPosition = 0;
+        _currentTime = 0;
+        
+        self.edit = NO;
+        self.hideRangeSlider = NO;
+        
+        [self updateGestureRecognizer];
         [self getMovieFrame];
     }
     
     return self;
+}
+
+- (void)setRangeSliderDefaultColor:(UIColor *)rangeSliderDefaultColor
+{
+    _rangeSliderDefaultColor = rangeSliderDefaultColor;
+    _leftThumb.defaultColdor = _rangeSliderDefaultColor;
+    _rightThumb.defaultColdor = _rangeSliderDefaultColor;
+    _topBorder.defaultColdor = _rangeSliderDefaultColor;
+    _bottomBorder.defaultColdor = _rangeSliderDefaultColor;
+}
+
+- (void)setRangeSliderHightlightColor:(UIColor *)rangeSliderHightlightColor
+{
+    _rangeSliderHightlightColor = rangeSliderHightlightColor;
+    _leftThumb.highlightColor = _rangeSliderHightlightColor;
+    _rightThumb.highlightColor = _rangeSliderHightlightColor;
+    _topBorder.highlightColor = _rangeSliderHightlightColor;
+    _bottomBorder.highlightColor = _rangeSliderHightlightColor;
+}
+
+- (void)setProgressviewDefaultColor:(UIColor *)progressviewDefaultColor
+{
+    _progressviewDefaultColor = progressviewDefaultColor;
+    _progressThumb.defaultColdor = _progressviewDefaultColor;
+}
+
+- (void)setProgressviewHightlightColor:(UIColor *)progressviewHightlightColor
+{
+    _progressviewHightlightColor = progressviewHightlightColor;
+    _progressThumb.highlightColor = _progressviewHightlightColor;
 }
 
 - (void)setHideRangeSlider:(BOOL)hideRangeSlider
@@ -105,7 +134,6 @@
     _hideRangeSlider = hideRangeSlider;
     _leftThumb.hidden = hideRangeSlider;
     _rightThumb.hidden = hideRangeSlider;
-    _centerView.hidden = hideRangeSlider;
     _topBorder.hidden = hideRangeSlider;
     _bottomBorder.hidden = hideRangeSlider;
 }
@@ -138,13 +166,15 @@
         _progressThumb.highlight = edit;
         _leftThumb.highlight = edit;
         _rightThumb.highlight = edit;
+        _topBorder.highlight = edit;
+        _bottomBorder.highlight = edit;
         [self updateGestureRecognizer];
     }
 }
 
 - (void)updateGestureRecognizer
 {
-    [self removeAllGestureRecognizer:@[_centerView, _leftThumb, _rightThumb, _progressThumb]];
+    [self removeAllGestureRecognizer:@[_leftThumb, _rightThumb, _progressThumb]];
     
     if (_edit) {
         
@@ -154,25 +184,19 @@
         UIPanGestureRecognizer *rightPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleRightPan:)];
         [_rightThumb addGestureRecognizer:rightPan];
         
-        UIPanGestureRecognizer *centerPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleCenterPan:)];
-        [_centerView addGestureRecognizer:centerPan];
-        
-        _progressThumb.hidden = YES;
-        
     } else {
         
         UILongPressGestureRecognizer *leftPan = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPan:)];
-        leftPan.minimumPressDuration = 2;
+        leftPan.minimumPressDuration = 1.5;
         [_leftThumb addGestureRecognizer:leftPan];
         
         UILongPressGestureRecognizer *rightPan = [[UILongPressGestureRecognizer alloc] initWithTarget:self action:@selector(handleLongPan:)];
-        rightPan.minimumPressDuration = 2;
+        rightPan.minimumPressDuration = 1.5;
         [_rightThumb addGestureRecognizer:rightPan];
         
         UIPanGestureRecognizer *progressPan = [[UIPanGestureRecognizer alloc] initWithTarget:self action:@selector(handleProgressPan:)];
         [_progressThumb addGestureRecognizer:progressPan];
         
-        _progressThumb.hidden = NO;
     }
 
 }
@@ -210,8 +234,10 @@
     if (_currentTime < _leftPosition || _currentTime > _rightPosition) {
         if (_currentTime < _leftPosition) {
             _currentTime = _leftPosition;
+            [self delegateCurrentArriveStartOrEnd:NO];
         } else if (_currentTime > _rightPosition) {
             _currentTime = _rightPosition;
+            [self delegateCurrentArriveStartOrEnd:YES];
         }
         
         [self delegateCurrentChange];
@@ -226,6 +252,14 @@
         [_delegate videoRange:self didChangeCurrentTime:self.currentTime];
     }
 }
+
+- (void)delegateCurrentArriveStartOrEnd:(BOOL)isEnd;
+{
+    if ([_delegate respondsToSelector:@selector(currentTimeArriveStartOrEnd:)]){
+        [_delegate currentTimeArriveStartOrEnd:isEnd];
+    }
+}
+
 
 - (void)delegateEndPanGesture
 {
@@ -246,11 +280,13 @@
         
         CGPoint translation = [gesture translationInView:self];
         
-        _currentTime += translation.x *_frame_width /(_frame_width-4*inset-_progressThumb.frame.size.width);
+        _currentTime += translation.x * _frame_width / (_frame_width-4*inset-_progressThumb.frame.size.width);
         if (_currentTime < _leftPosition) {
             _currentTime = _leftPosition;
+            [self delegateCurrentArriveStartOrEnd:NO];
         } else if (_currentTime > _rightPosition) {
             _currentTime = _rightPosition;
+            [self delegateCurrentArriveStartOrEnd:YES];
         }
         
         [gesture setTranslation:CGPointZero inView:self];
@@ -264,26 +300,27 @@
 - (void)handleLeftPan:(UIPanGestureRecognizer *)gesture
 {
     if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateChanged) {
-        
+        CGFloat inset = _leftThumb.frame.size.width;
         CGPoint translation = [gesture translationInView:self];
-        
-        _leftPosition += translation.x;
+        float offsetX = translation.x * _frame_width / (_frame_width - 2*inset);
+
+        _leftPosition += offsetX;
         if (_leftPosition < 0) {
             _leftPosition = 0;
-        }
-        
-        if (
-            (_rightPosition-_leftPosition <= _leftThumb.frame.size.width+_rightThumb.frame.size.width) ||
+        } else if (_leftPosition > _frame_width) {
+            _leftPosition = _frame_width;
+        } else if (_leftPosition - _rightPosition >0) {
+            _leftPosition = _rightPosition;
+        } else if (
             ((self.maxGap > 0) && (self.rightPosition-self.leftPosition > self.maxGap)) ||
             ((self.minGap > 0) && (self.rightPosition-self.leftPosition < self.minGap))
             ){
-            _leftPosition -= translation.x;
+            _leftPosition -= offsetX;
         }
         
         [gesture setTranslation:CGPointZero inView:self];
         
         [self setNeedsLayout];
-        
         [self delegateNotification];
         
     }
@@ -298,27 +335,23 @@
 {
     if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateChanged) {
         
+        CGFloat inset = _rightThumb.frame.size.width;
         
         CGPoint translation = [gesture translationInView:self];
-        _rightPosition += translation.x;
+        float offsetX = translation.x * _frame_width / (_frame_width - 2*inset);
+        
+        _rightPosition += offsetX;
         if (_rightPosition < 0) {
             _rightPosition = 0;
-        }
-        
-        if (_rightPosition > _frame_width){
+        } else if (_rightPosition > _frame_width){
             _rightPosition = _frame_width;
-        }
-        
-        if (_rightPosition-_leftPosition <= 0){
-            _rightPosition -= translation.x;
-        }
-        
-        if ((_rightPosition-_leftPosition <= _leftThumb.frame.size.width+_rightThumb.frame.size.width) ||
+        } else if (_rightPosition-_leftPosition < 0){
+            _rightPosition = _leftPosition;
+        } else if (
             ((self.maxGap > 0) && (self.rightPosition-self.leftPosition > self.maxGap)) ||
             ((self.minGap > 0) && (self.rightPosition-self.leftPosition < self.minGap))){
-            _rightPosition -= translation.x;
+            _rightPosition -= offsetX;
         }
-        
         
         [gesture setTranslation:CGPointZero inView:self];
         
@@ -331,37 +364,6 @@
     if (gesture.state == UIGestureRecognizerStateEnded){
         [self delegateEndPanGesture];
     }
-}
-
-
-- (void)handleCenterPan:(UIPanGestureRecognizer *)gesture
-{
-    
-    if (gesture.state == UIGestureRecognizerStateBegan || gesture.state == UIGestureRecognizerStateChanged) {
-        
-        CGPoint translation = [gesture translationInView:self];
-        
-        _leftPosition += translation.x;
-        _rightPosition += translation.x;
-        
-        if (_rightPosition > _frame_width || _leftPosition < 0){
-            _leftPosition -= translation.x;
-            _rightPosition -= translation.x;
-        }
-        
-        
-        [gesture setTranslation:CGPointZero inView:self];
-        
-        [self setNeedsLayout];
-        
-        [self delegateNotification];
-        
-    }
-    
-    if (gesture.state == UIGestureRecognizerStateEnded){
-        [self delegateEndPanGesture];
-    }
-    
 }
 
 - (void)handleLongPan:(UIPanGestureRecognizer *)gesture {
@@ -383,16 +385,13 @@
         
         _progressThumb.center = CGPointMake(inset*2 +_progressThumb.frame.size.width/2 + _currentTime /_frame_width*(_frame_width-4*inset-_progressThumb.frame.size.width), _progressThumb.frame.size.height/2);
         
-        _leftThumb.center = CGPointMake(_leftPosition+inset, _leftThumb.frame.size.height/2);
+        _leftThumb.center = CGPointMake(inset+_leftPosition/_frame_width*(_frame_width-4*inset), _leftThumb.frame.size.height/2);
         
-        _rightThumb.center = CGPointMake(_rightPosition-inset, _rightThumb.frame.size.height/2);
+        _rightThumb.center = CGPointMake(3 * inset+_rightPosition/_frame_width*(_frame_width-4*inset), _rightThumb.frame.size.height/2);
         
         _topBorder.frame = CGRectMake(_leftThumb.frame.origin.x + _leftThumb.frame.size.width, 0, _rightThumb.frame.origin.x - _leftThumb.frame.origin.x - _leftThumb.frame.size.width/2, SLIDER_BORDERS_SIZE);
         
         _bottomBorder.frame = CGRectMake(_leftThumb.frame.origin.x + _leftThumb.frame.size.width, _bgView.frame.size.height-SLIDER_BORDERS_SIZE, _rightThumb.frame.origin.x - _leftThumb.frame.origin.x - _leftThumb.frame.size.width/2, SLIDER_BORDERS_SIZE);
-        
-        
-        _centerView.frame = CGRectMake(_leftThumb.frame.origin.x + _leftThumb.frame.size.width, _centerView.frame.origin.y, _rightThumb.frame.origin.x - _leftThumb.frame.origin.x - _leftThumb.frame.size.width, _centerView.frame.size.height);
     
     };
     
@@ -606,6 +605,14 @@
 {
     float newValue = currentTime * _frame_width / _durationSeconds;
     if (newValue != _currentTime) {
+        
+        if (newValue > _rightPosition) {
+            newValue = _rightPosition;
+            [self delegateCurrentArriveStartOrEnd:YES];
+        } else if (newValue < _leftPosition) {
+            newValue = _leftPosition;
+            [self delegateCurrentArriveStartOrEnd:NO];
+        }
         _currentTime = newValue;
         [self setNeedsLayout];
     }

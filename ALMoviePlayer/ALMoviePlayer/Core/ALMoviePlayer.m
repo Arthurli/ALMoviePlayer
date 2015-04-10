@@ -7,16 +7,10 @@
 //
 
 #import "ALMoviePlayer.h"
-#import "ALMoviePlayerViewController.h"
-#import "ALVideoRangeSlider.h"
-#import "ALMovieToolBar.h"
 
 @interface ALMoviePlayer ()<ALMovieToolBarDelegate, ALVideoRangeSliderDelegate>
 
 @property (strong, nonatomic) AVAssetExportSession *exportSession;
-@property (nonatomic, strong) ALMoviePlayerViewController *controller;
-@property (nonatomic, strong) ALVideoRangeSlider *videoSlider;
-@property (nonatomic, strong) ALMovieToolBar *toolBar;
 @property (nonatomic, strong) NSTimer *timer;
 @property (nonatomic, strong) UIButton *button;
 @property (nonatomic, assign) BOOL floatBar;
@@ -242,7 +236,8 @@
 
 - (void)updateMovieProgress{
     dispatch_async(dispatch_get_main_queue(), ^{
-        if ([_controller.moviePlayer playbackState] == MPMoviePlaybackStatePlaying) {
+        if ([_controller.moviePlayer playbackState] != MPMoviePlaybackStatePaused &&
+            [_controller.moviePlayer playbackState] != MPMoviePlaybackStateStopped) {
             [_videoSlider setNowCurrentTime:_controller.moviePlayer.currentPlaybackTime];
         }
     });
@@ -263,9 +258,22 @@
         default:
             break;
     }
+    
+    if ([_delegate respondsToSelector:@selector(didClickButtonWithType:)]) {
+        [_delegate didClickButtonWithType:buttonType];
+    }
 }
 
 #pragma mark - ALVideoRangeSliderDelegate
+
+- (void)currentTimeArriveStartOrEnd:(BOOL)isEnd
+{
+    if (isEnd) {
+        if (_controller.moviePlayer.playbackState == MPMoviePlaybackStatePlaying) {
+            [_controller.moviePlayer pause];
+        }
+    }
+}
 
 - (void)videoRange:(ALVideoRangeSlider *)videoRange didChangeLeftPosition:(float)leftPosition rightPosition:(float)rightPosition
 {

@@ -27,10 +27,12 @@
     ALMoviePlayer *moviePlayer = [[ALMoviePlayer alloc] init];
     moviePlayer.title = @"thaiPhuketKaronBeach.mov";
     UIViewController *a = [[UIViewController alloc] init];
-    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:a];
+    UINavigationController *nav = [[UINavigationController alloc] initWithRootViewController:moviePlayer];
     [self presentViewController:nav animated:YES completion:^{
-        [a.navigationController pushViewController:moviePlayer animated:YES];
         moviePlayer.filePath = filePath;
+        moviePlayer.videoSlider.hideRangeSlider = NO;
+        moviePlayer.videoSlider.rangeSliderDefaultColor = [UIColor greenColor];
+        moviePlayer.videoSlider.rangeSliderHightlightColor = [UIColor redColor];
     }];
 }
 
